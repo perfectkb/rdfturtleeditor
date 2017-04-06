@@ -1,0 +1,70 @@
+<!--
+* Copyright 2017 ENGIE 'Smart Energy Aware Systems' SEAS Project. 
+* Licensed under [license], Version 1.0 (the "License"); 
+* you may not use this file except in compliance with the License. 
+* You may obtain a copy of the License at 
+* 
+* [license URL]
+* 
+* Unless required by applicable law or agreed to in writing, software 
+* distributed under the License is distributed on an "AS IS" BASIS, 
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+* See the License for the specific language governing permissions and 
+* limitations under the License. 
+*
+-->
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html lang="en" ng-app="rdfeditor" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="rdfeditor" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="rdfeditor" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="rdfeditor" class="no-js">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>RDF Editor - TURTLE</title>
+    <meta name="description" content="This RDF Editor performs syntax highlighting based on TURTLE syntax together with type-ahead functionality">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
+    <link rel="stylesheet" href="app.css">
+
+</head>
+
+<body>
+    <ul class="menu">
+        <li><a href="#!/editor">RDF Editor</a></li>
+        <li><a href="#!/help">Help</a></li>
+    </ul>
+
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+    <div ng-view></div>
+
+    <div>RDF Editor: v<span app-version></span></div>
+
+    <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="app.js"></script>
+    <script src="view1/view1.js"></script>
+    <script src="view2/view2.js"></script>
+    <script src="components/version/version.js"></script>
+    <script src="components/version/version-directive.js"></script>
+    <script src="components/version/interpolate-filter.js"></script>
+    <!--ace-ui-->
+    <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="bower_components/angular-ui-ace/ui-ace.js"></script>
+    <script src="bower_components/ace-builds/src/ace.js"></script>
+    <script src="bower_components/ace-builds/src/ext-language_tools.js"></script>
+    <script src="lib/n3-browser.js"></script>
+</body>
+
+</html>
