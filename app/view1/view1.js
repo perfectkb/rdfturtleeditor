@@ -72,33 +72,34 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         }
     };
 
-
-    $http.get('https://w3id.org/seas/SigFoxCommunicationDevice')
-        .success(function(data) {
-            $scope.names = eval(data);
-            console.log(data)
-        })
-        .error(function(data) {
-            alert(data);
-            console.log('Error: ' + data);
-        });
-
-    // Initial code content...
     /*
+        $http.get('https://w3id.org/seas/SigFoxCommunicationDevice')
+            .success(function(data) {
+                $scope.names = eval(data);
+                console.log(data)
+            })
+            .error(function(data) {
+                alert(data);
+                console.log('Error: ' + data);
+            });
+    */
+    // Initial code content...
+
     $scope.aceModel = '#Directives \n' +
-        '#prefix/base\n' +
+        '#prefix/base correct sytnax \n' +
         '@prefix ns: <http://something.com> .\n' +
         '@base <http://www.dhs.com> .\n\n' +
-        '#sparql prefix/base\n' +
-        'PREFIX ns: <http://something.com>.\n' +
-        'BASE <http://www.abc.com> .\n\n' +
-        '#Triplets\n' +
-        '#triplets in all possible forms\n' +
-        'ns:sub ns:pred ns:obj, ns:anotherObj, "literalObj","literalObj"^^xsd:String;\n' +
-        'ns:newPred ns:obj.\n\n' +
-        '#blank nodes\n' +
-        'ns:newSub ns:newPred _:blankNode .\n' +
-        '#predicate cannot be blank node. Color not changing is error condition \n' +
-        '_:blankSub _:djs ns:newspace ';
-        */
+
+        '#syntax error when tried a namespace with base directive\n' +
+        '@base ns2: <http://something.com> .\n\n' +
+
+        '#Triplets correct syntax \n' +
+        'ns:sub ns:pred ns:obj,ns:anotherObj .\n\n' +
+
+        '#blank nodes correct syntax \n' +
+        'ns:newSub ns:newPred _:blankNode .\n\n' +
+
+        '#warning when the statement is not ended with a . \n' +
+        '_:blankSub h:djs ns:newspace ';
+
 });
