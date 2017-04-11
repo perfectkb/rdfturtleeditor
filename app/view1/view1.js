@@ -73,7 +73,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     };
 
     /*
-        $http.get('http://www.engie.fr/resource/CA00001B3/model')
+        $http.get('https://w3id.org/seas/SigFoxCommunicationDevice')
             .success(function(data) {
                 $scope.names = eval(data);
                 console.log(data)
@@ -83,7 +83,6 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                 console.log('Error: ' + data);
             });
     */
-
     // Initial code content...
     /*
     $scope.aceModel = '#Directives \n' +
