@@ -65,11 +65,16 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
             // Events
             _ace.on("changeSession", function() { console.log('session changed') });
-            _session.on("change", function() { console.log(' content changed ') });
+            _session.on("change", function() {
+                //console.log(' content changed ')
+                //console.log(_session.doc);
+            });
         }
     };
 
+
     // Initial code content...
+    /*
     $scope.aceModel = '#Directives \n' +
         '#prefix/base\n' +
         '@prefix ns: <http://something.com> .\n' +
@@ -85,4 +90,5 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         'ns:newSub ns:newPred _:blankNode .\n' +
         '#predicate cannot be blank node. Color not changing is error condition \n' +
         '_:blankSub _:djs ns:newspace ';
+        */
 });

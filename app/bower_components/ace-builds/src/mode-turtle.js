@@ -26,11 +26,28 @@ define('ace/mode/turtle', function(require, exports, module) {
 
     (function() {
         // Extra logic goes here. (see below)
+        //Syntax validation through Worker
+        var WorkerClient = require("ace/worker/worker_client").WorkerClient;
+        this.createWorker = function(session) {
+            var worker = new WorkerClient(["ace"], "ace/mode/turtle_worker", "WorkerModule");
+            worker.attachToDocument(session.getDocument());
+
+            worker.on("lint", function(results) {
+                session.setAnnotations(results.data);
+            });
+
+            worker.on("terminate", function() {
+                session.clearAnnotations();
+            });
+
+            return worker;
+        };
     }).call(Mode.prototype);
 
     exports.Mode = Mode;
 });
 
+//HIGHLIGHT RULES
 define('ace/mode/turtle_highlight_rules', function(require, exports, module) {
     "use strict";
 
