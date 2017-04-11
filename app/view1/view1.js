@@ -24,7 +24,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     });
 }])
 
-.controller('View1Ctrl', function($scope) {
+.controller('View1Ctrl', function($scope, $http) {
 
     // The modes
     $scope.modes = ['Turtle'];
@@ -72,16 +72,17 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         }
     };
 
-    $http.get('http://www.viudadesoubrier.com/angular/model.php')
-        .success(function(data) {
-            $scope.names = eval(data);
-            console.log(data)
-        })
-        .error(function(data) {
-            alert(data);
-            console.log('Error: ' + data);
-        });
-
+    /*
+        $http.get('http://www.engie.fr/resource/CA00001B3/model')
+            .success(function(data) {
+                $scope.names = eval(data);
+                console.log(data)
+            })
+            .error(function(data) {
+                alert(data);
+                console.log('Error: ' + data);
+            });
+    */
 
     // Initial code content...
     /*
