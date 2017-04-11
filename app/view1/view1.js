@@ -72,6 +72,16 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         }
     };
 
+    $http.get('http://www.viudadesoubrier.com/angular/model.php')
+        .success(function(data) {
+            $scope.names = eval(data);
+            console.log(data)
+        })
+        .error(function(data) {
+            alert(data);
+            console.log('Error: ' + data);
+        });
+
 
     // Initial code content...
     /*
