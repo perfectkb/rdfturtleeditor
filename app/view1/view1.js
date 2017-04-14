@@ -146,8 +146,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         "@base  <http://something.com> .\n\n" +
 
         "#Triplets multiline  \n" +
-        "ns:sub ns:pred ns:obj,ns:anotherObj;\n" +
-        "     ns:hasvqlue \n" +
+        "ns:sub ns:pred ns:obj,ns:anotherObj; ns:hasvqlue \n" +
         "     \"dd\"^^xsd:string .\n\n" +
 
         "#blank nodes  \n" +

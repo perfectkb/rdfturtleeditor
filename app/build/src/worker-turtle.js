@@ -4236,8 +4236,9 @@ define("ace/mode/turtle_worker",["require","exports","module","ace/lib/oop","ace
                     console.log(store);
 
                 } catch (err) {
+                    var linenumber = err.split('\n')[1].split(' ')[1] - 1;
                     errors.push({
-                        row: err.split('\n')[1].split(' ')[1] - 1,
+                        row: linenumber,
                         column: 0,
                         text: err.split('\n')[1].split('>:')[1],
                         type: "error",
@@ -4245,7 +4246,8 @@ define("ace/mode/turtle_worker",["require","exports","module","ace/lib/oop","ace
                     });
                     console.log(err);
                 }
-            }
+            };
+
             this.sender.emit("annotate", errors);
         }
     }).call(TurtleWorker.prototype);
