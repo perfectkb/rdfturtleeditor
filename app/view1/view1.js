@@ -136,24 +136,24 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         */
     // Initial code content...
 
-    $scope.aceModel = "#Directives \n" +
-        "#prefix/base correct sytnax  \n" +
-        "@prefix ns: <http://prefix.com#> . \n" +
-        "@prefix xsd: <http://toto.com> . \n" +
-        "@base <http://www.base.com#> . \n\n" +
+    $scope.aceModel = "#Directives\n" +
+        "#prefix/base correct sytnax\n" +
+        "@prefix ns: <http://prefix.com#> .\n" +
+        "@prefix xsd: <http://toto.com> .\n" +
+        "@base <http://www.base.com#> .\n\n" +
 
-        "#syntax error when tried a namespace with base directive \n" +
-        "@base  <http://something.com> . \n\n" +
+        "#syntax error when tried a namespace with base directive\n" +
+        "@base  <http://something.com> .\n\n" +
 
         "#Triplets multiline  \n" +
-        "ns:sub ns:pred ns:obj,ns:anotherObj ; \n" +
+        "ns:sub ns:pred ns:obj,ns:anotherObj;\n" +
         "     ns:hasvqlue \n" +
-        "     \"dd\"^^xsd:string . \n\n" +
+        "     \"dd\"^^xsd:string .\n\n" +
 
         "#blank nodes  \n" +
-        "ns:newSub ns:newPred _:blankNode . \n" +
+        "ns:newSub ns:newPred _:blankNode .\n" +
 
-        "#error when the statement is not ended with a .  \n" +
-        "_:blankSub ns:djs ns:newspace  \n";
+        "#error when the statement is not ended with a .\n" +
+        "_:blankSub ns:djs ns:newspace .";
 
 });
