@@ -9,6 +9,9 @@ define("ace/mode/turtle_highlight_rules",["require","exports","module","ace/lib/
     var prefixedname = "([a-zA-Z0-9-?]+[-]*[':'])+[a-zA-Z0-9-_?]*";
     var literal = "(['\"']+[a-zA-Z0-9-_.#]+['\"']['\^\^xsd:']*['STRING|INTEGER|FLOAT']*)";
 
+
+
+
     var TurtleHighlightRules = function() {
 
         var keywordMapper = this.createKeywordMapper({
@@ -21,6 +24,7 @@ define("ace/mode/turtle_highlight_rules",["require","exports","module","ace/lib/
             "rdf.statement": ""
 
         }, "identifier");
+
         var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
         this.$rules = {
             "start": [{
@@ -52,18 +56,30 @@ define("ace/mode/turtle_highlight_rules",["require","exports","module","ace/lib/
                 }
             ],
             "pname_ns": [{
-                token: "constant.language.boolean",
-                regex: "([a-zA-Z0-9-_?]+[':'])",
+                token: function(value) {
+                    if (/[a-zA-Z0-9-_?]*[':']+/.test(value)) {
+                        return "constant.language.boolean";
+                    } else {
+                        return "invalid";
+                    }
+                },
+                regex: "([a-zA-Z0-9-_?:]+)",
                 next: "iriref"
             }],
             "iriref": [{
-                token: "list.markup",
+                token: "line.markup",
                 regex: "<([a-zA-Z]*['s://'?'://']*?[a-zA-Z0-9-_./#?=]+)>",
                 next: "dot"
             }],
             "dot": [{
-                token: "list.markup",
-                regex: "['.'?]",
+                token: function(value) {
+                    if (/[.]/.test(value)) {
+                        return "constant.language.boolean";
+                    } else {
+                        return "invalid";
+                    }
+                },
+                regex: "[a-zA-Z0-9-_./#?=]+",
                 next: "start"
             }],
             "iri": [{
@@ -169,6 +185,11 @@ define("ace/mode/turtle",["require","exports","module","ace/lib/oop","ace/mode/t
 
             worker.on("annotate", function(results) {
                 session.setAnnotations(results.data);
+            });
+
+            worker.on("somecallback", function(results) {
+                console.log("SOMECALLBACK DETECTED");
+                console.log(results);
             });
 
             worker.on("terminate", function() {
