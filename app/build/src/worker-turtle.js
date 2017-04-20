@@ -4183,34 +4183,6 @@ define("ace/mode/turtle_worker",["require","exports","module","ace/lib/oop","ace
             return false
         };
 
-        this.loadNs = function(prefix) {
-            var xmlhttp = new XMLHttpRequest();
-
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-                    if (xmlhttp.status == 200) {
-                        var uri = 'https://example.org/resource.ttl';
-                        var mimeType = 'text/turtle'
-                        var store = $rdf.graph()
-
-                        $rdf.parse(xmlhttp.responseText, store, uri, mimeType);
-                        store.statements.forEach(function(statement) {
-                            console.log(statement);
-                        });
-
-                    } else if (xmlhttp.status == 400) {
-                        console.log('There was an error 400');
-                    } else {
-                        console.log('something else other than 200 was returned');
-                    }
-                }
-            };
-
-            xmlhttp.open("GET", "http://localhost:8080/" + prefix, true);
-            xmlhttp.setRequestHeader('Accept', 'text/turtle');
-            xmlhttp.send();
-        }
-
         var curLine = 1;
         this.onUpdate = function() {
             var text = this.doc.getValue();
@@ -4233,7 +4205,6 @@ define("ace/mode/turtle_worker",["require","exports","module","ace/lib/oop","ace
                             raw: " is not valid"
                         });
                     });
-                    console.log(store);
 
                 } catch (err) {
                     var linenumber = err.split('\n')[1].split(' ')[1] - 1;
@@ -4242,6 +4213,13 @@ define("ace/mode/turtle_worker",["require","exports","module","ace/lib/oop","ace
                         column: 0,
                         text: err.split('\n')[1].split('>:')[1],
                         type: "error",
+                        raw: " errorHere"
+                    });
+                    errors.push({
+                        row: 0,
+                        column: 0,
+                        text: err.split('\n')[1].split('>:')[1],
+                        type: "warning",
                         raw: " errorHere"
                     });
                     console.log(err);

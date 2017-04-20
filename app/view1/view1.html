@@ -1,5 +1,10 @@
-<div>
-    <select ng-model="mode" ng-options="m for m in modes" ng-change="modeChanged()"></select>
-    <br>
+<div class="col-md-9">
     <div ui-ace="aceOption" ng-model="aceModel"></div>
+</div>
+<div class="col-md-3">
+    <h5 ng-show="urimessages.length > 0"><span class="glyphicon glyphicon-link"></span>&nbsp;IRI hints</h5>
+    <h6 ng-repeat="x in urimessages"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{x}}</h6>
+    <br/>
+    <h5 ng-show="statementmessages.length > 0">&nbsp;Triplets hints</h5>
+    <h6 ng-repeat="x in statementmessages"><span class="glyphicon glyphicon-link"></span>&nbsp;{{x}}</h6>
 </div>
