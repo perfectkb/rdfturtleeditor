@@ -14,7 +14,12 @@
 */
 
 .ace_editor {
-    height: 80vh;
+    height: 70vh;
+}
+
+.aceeditormax {
+    height: 90vh;
+    z-index: 0;
 }
 
 html {
@@ -30,6 +35,18 @@ html {
     height: 100%;
 }
 
+.fullscreen {
+    width: 100%;
+    height: 100%;
+}
+
+.warningHell {
+    background: rgba(255, 0, 0, 0.3);
+    position: absolute;
+    width: 100% !important;
+    left: 0 !important;
+}
+
 .footer {
     position: absolute;
     bottom: 0;
@@ -37,5 +54,59 @@ html {
     /* Set the fixed height of the footer here */
     height: 60px;
     background-color: #f5f5f5;
-    z-index: 999;
+    z-index: 1;
+}
+
+
+/*======================
+Animations
+=======================*/
+
+.animation {
+    -webkit-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -moz-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -ms-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    -o-transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    transition: 400ms cubic-bezier(0.250, 0.250, 0.750, 0.750) all;
+    position: relative;
+}
+
+.animation.ng-enter {
+    -webkit-transform: rotateX(90deg) rotateZ(90deg);
+    -moz-transform: rotateX(90deg) rotateZ(90deg);
+    -ms-transform: rotateX(90deg) rotateZ(90deg);
+    -o-transform: rotateX(90deg) rotateZ(90deg);
+    transform: rotateX(90deg) rotateZ(90deg);
+    opacity: 0;
+    height: 0px;
+}
+
+.animation.ng-leave {
+    -webkit-transform: rotateX(0deg) rotateZ(0deg);
+    -moz-transform: rotateX(0deg) rotateZ(0deg);
+    -ms-transform: rotateX(0deg) rotateZ(0deg);
+    -o-transform: rotateX(0deg) rotateZ(0deg);
+    transform: rotateX(0deg) rotateZ(0deg);
+    opacity: 1;
+    height: 30px;
+}
+
+.animation.ng-enter.ng-enter-active {
+    -webkit-transform: rotateX(0deg) rotateZ(0deg);
+    -moz-transform: rotateX(0deg) rotateZ(0deg);
+    -ms-transform: rotateX(0deg) rotateZ(0deg);
+    -o-transform: rotateX(0deg) rotateZ(0deg);
+    transform: rotateX(0deg) rotateZ(0deg);
+    opacity: 1;
+    height: 30px;
+}
+
+.animation.ng-leave.ng-leave-active {
+    -webkit-transform: rotateX(90deg) rotateZ(90deg);
+    -moz-transform: rotateX(90deg) rotateZ(90deg);
+    -ms-transform: rotateX(90deg) rotateZ(90deg);
+    -o-transform: rotateX(90deg) rotateZ(90deg);
+    transform: rotateX(90deg) rotateZ(90deg);
+    opacity: 0;
+    height: 0px;
 }

@@ -1,17 +1,19 @@
 {
-    "name": "engie-rdf-editor",
-    "description": "A starter project for AngularJS",
-    "version": "0.0.0",
-    "homepage": "https://github.com/angular/angular-seed",
-    "license": "MIT",
-    "private": true,
-    "dependencies": {
-        "angular": "~1.5.0",
-        "angular-route": "~1.5.0",
-        "angular-loader": "~1.5.0",
-        "angular-mocks": "~1.5.0",
-        "html5-boilerplate": "^5.3.0",
-        "ace-builds": "1.2.6",
-        "angular-ui-ace": "0.1.3"
-    }
+  "name": "engie-rdf-editor",
+  "description": "A starter project for AngularJS",
+  "version": "0.0.0",
+  "homepage": "https://github.com/angular/angular-seed",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.5.0",
+    "angular-route": "~1.5.0",
+    "angular-loader": "~1.5.0",
+    "angular-mocks": "~1.5.0",
+    "html5-boilerplate": "^5.3.0",
+    "ace-builds": "1.2.6",
+    "angular-ui-ace": "0.1.3",
+    "ng-material-floating-button": "ng-mfb#^0.6.2",
+    "angular-screenfull": "^0.1.1"
+  }
 }
