@@ -1,15 +1,22 @@
 <div class="row">
     <div class="col-md-9">
         <div ng-class="{aceeditormax: isFullScreen}" ui-ace="aceOption" ng-model="aceModel"></div>
+        <i ng-show="loading" class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+        <i ng-show="!loading" class="fa fa-television" style="font-size:24px"></i>
     </div>
     <div class="col-md-3 warning">
-        <h5 ng-show="urimessages.length > 0"><span class="glyphicon glyphicon-link"></span>&nbsp;IRI hints</h5>
-        <h6 ng-repeat="x in urimessages"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{x}}</h6>
-        <br/>
-        <h5 ng-show="statementmessages.length > 0">&nbsp;Triplets hints</h5>
-        <h6 ng-repeat="x in statementmessages track by $index"><span class="glyphicon glyphicon-link"></span>&nbsp;{{x}}</h6>
+        <div style="border:0ch;" class="panel panel-primary">
+            <div style="background-color:cadetblue;" class="panel-heading clearfix">
+                <h5 style="font-size:small" class="panel-title">Notifications</h5>
+            </div>
+            <div style="font-size:small; font-family:monospace" class="panel-body">
+                <p ng-repeat="x in urimessages"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{x}}</p>
+                <p ng-repeat="x in statementmessages track by $index"><span class="glyphicon glyphicon-warning-sign"></span>&nbsp;{{x}}</p>
+            </div>
+        </div>
     </div>
-    <nav mfb-menu position="br" effect="slidein-spring" label="Options" active-icon="glyphicon glyphicon-chevron-down" resting-icon="glyphicon glyphicon-chevron-up" toggling-method="click">
+
+    <nav mfb-menu position="br" effect="slidein-spring" label="Options" active-icon="glyphicon glyphicon-chevron-down" style="font-size:40px" resting-icon="glyphicon glyphicon-chevron-up" toggling-method="click">
         <button mfb-button label="Maximize" ngsf-toggle-fullscreen ng-click="fullScreen()"></button>
     </nav>
 </div>

@@ -47,12 +47,25 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     }
 })
 
-.service('RdfSeasService', function($http, dictionary) {
+.service('share', function() {
+    var sharedVariables = {};
+    return {
+        getSharedVariables: function() {
+            return sharedVariables;
+        },
+        setVariable: function(paramName, value) {
+            sharedVariables[paramName] = value;
+        }
+    };
+})
+
+.service('RdfSeasService', function($http, dictionary, share) {
     //var proxy = 'http://localhost:8080/';
     var proxy = 'http://54.91.114.123:8080/'
 
-    this.fillcompleters = function(ns, iri, completers, callbackFunc) {
+    this.fillcompleters = function(ns, iri, callbackFunc) {
         console.log('Going to fetch: ' + iri);
+        share.getSharedVariables().setLoading(true);
         $http({
             method: 'GET',
             url: proxy + iri,
@@ -70,6 +83,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                 $rdf.parse(response.data, store, uri, mimeType);
                 //console.log(store.statements);
                 store.statements.forEach(function(statement) {
+
                     if (statement.predicate.value.indexOf('imports') !== -1) {
                         var newiri = statement.object.value.replace(uri, iri);
                         $http({
@@ -88,28 +102,33 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             var seaswordlistObj = [];
                             newstore.statements.forEach(function(eachst) {
                                 try {
-                                    if (eachst.subject.value.startsWith('https://w3id.org/seas') && !eachst.subject.value.includes('#_')) {
-                                        if (seaswordlistSub.indexOf(eachst.subject.value.replace('https://w3id.org/seas/', "")) === -1) {
-                                            seaswordlistSub.push('seas:' + eachst.subject.value.replace('https://w3id.org/seas/', ""));
-                                            dictionary.put('sub', eachst.subject.value);
+                                    if ((eachst.object.value.indexOf("http://www.w3.org/2000/01/rdf-schema#Class") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+                                        if (eachst.subject.value.startsWith('https://w3id.org/seas') && !eachst.subject.value.includes('#_')) {
+                                            if (seaswordlistSub.indexOf(eachst.subject.value.replace('https://w3id.org/seas/', "")) === -1) {
+                                                seaswordlistSub.push('seas:' + eachst.subject.value.replace('https://w3id.org/seas/', ""));
+                                                dictionary.put('sub', eachst.subject.value);
+                                            }
                                         }
-                                    }
-                                    if (eachst.predicate.value.startsWith('https://w3id.org/seas') && !eachst.predicate.value.includes('#_')) {
-                                        if (seaswordlistPred.indexOf(eachst.predicate.value.replace('https://w3id.org/seas/', "")) === -1) {
-                                            seaswordlistPred.push('seas:' + eachst.predicate.value.replace('https://w3id.org/seas/', ""));
-                                            dictionary.put('pred', eachst.predicate.value);
+                                        if (eachst.predicate.value.startsWith('https://w3id.org/seas') && !eachst.predicate.value.includes('#_')) {
+                                            if (seaswordlistPred.indexOf(eachst.predicate.value.replace('https://w3id.org/seas/', "")) === -1) {
+                                                seaswordlistPred.push('seas:' + eachst.predicate.value.replace('https://w3id.org/seas/', ""));
+                                                dictionary.put('pred', eachst.predicate.value);
+                                            }
                                         }
-                                    }
-                                    if (eachst.object.value.startsWith('https://w3id.org/seas') && !eachst.object.value.includes('#_')) {
-                                        if (seaswordlistObj.indexOf(eachst.object.value.replace('https://w3id.org/seas/', "")) === -1) {
-                                            seaswordlistObj.push('seas:' + eachst.object.value.replace('https://w3id.org/seas/', ""));
-                                            dictionary.put('obj', eachst.predicate.value);
+                                        if (eachst.object.value.startsWith('https://w3id.org/seas') && !eachst.object.value.includes('#_')) {
+                                            if (seaswordlistObj.indexOf(eachst.object.value.replace('https://w3id.org/seas/', "")) === -1) {
+                                                seaswordlistObj.push('seas:' + eachst.object.value.replace('https://w3id.org/seas/', ""));
+                                                dictionary.put('obj', eachst.predicate.value);
+                                            }
                                         }
                                     }
                                 } catch (err) {
                                     //Current bug. TypeError is thrown when object is a collection type in statement
                                     console.log('Fucking typeerror')
                                 }
+
                             });
 
                             if (seaswordlistObj.length > 0) {
@@ -126,7 +145,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                         }));
                                     }
                                 };
-                                completers.push(objectCompleter);
+                                share.getSharedVariables().completers.push(objectCompleter);
                             }
 
                             if (seaswordlistSub.length > 0) {
@@ -138,12 +157,12 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                             return {
                                                 caption: word,
                                                 value: word,
-                                                meta: ns + ":" + 'Sub'
+                                                meta: ns + ":" + 'Concept'
                                             };
                                         }));
                                     }
                                 };
-                                completers.push(objectCompleter);
+                                share.getSharedVariables().completers.push(objectCompleter);
                             }
                             if (seaswordlistPred.length > 0) {
                                 var objectCompleter = {
@@ -159,30 +178,35 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                         }));
                                     }
                                 };
-                                completers.push(objectCompleter);
+                                share.getSharedVariables().completers.push(objectCompleter);
                             }
+                            share.getSharedVariables().setLoading(false);
                         }, function(err) {
+                            share.getSharedVariables().setLoading(false);
                             console.log('fucked up - could not retrieve seas ontology uri:');
                         });
                     }
+
                 });
             },
             function errorCallback(response) {
                 //processRdfXmlCallback(ns, uri, format, 'fail');
                 console.log('unable to process seas');
                 urimessages.push('could not retrieve uri:' + iri);
+
             });
     };
 
 })
 
-.service('RdfService', function($http, dictionary) {
-    this.fillcompleters = function(ns, uri, format, completers, processRdfXmlCallback) {
+.service('RdfService', function($http, dictionary, share) {
+    this.fillcompleters = function(ns, uri, format) {
         //var proxy = 'http://localhost:8080/';
-        var proxy = 'http://54.91.114.123:8080/'
+        var proxy = 'http://54.91.114.123:8080/';
 
         var store = $rdf.graph();
         var parsed = false;
+        share.getSharedVariables().setLoading(true);
 
         $http({
             method: 'GET',
@@ -198,18 +222,18 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                 } catch (parseerror) {
                     console.log('parsing failed for format:' + mimeType + ' will now try format:rdf+xml');
                     if (format === 'application/rdf+xml')
-                        processRdfXmlCallback(ns, uri, format, 'pass');
+                        share.getSharedVariables().processRdfXmlCallback(ns, uri, format, 'pass');
                     else
-                        processRdfXmlCallback(ns, uri, format, 'fail');
+                        share.getSharedVariables().processRdfXmlCallback(ns, uri, format, 'fail');
                 }
                 var wordlistSub = [];
                 var wordlistPred = [];
                 var wordlistObj = [];
 
                 store.statements.forEach(function(st) {
-                    if ((st.object.value.indexOf("<http://www.w3.org/2000/01/rdf-schema#Class>") !== -1) ||
-                        (st.object.value.indexOf("<http://www.w3.org/2002/07/owl#Class>") !== -1) ||
-                        (st.object.value.indexOf("<http://www.w3.org/2000/01/rdf-schema#Class>") !== -1)) {
+                    if ((st.object.value.indexOf("http://www.w3.org/2000/01/rdf-schema#Class") !== -1) ||
+                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1) ||
+                        (st.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
                         if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
                             dictionary.put('sub', st.subject.value);
                             if (uri.indexOf('#') > -1) {
@@ -260,12 +284,12 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                 return {
                                     caption: word,
                                     value: word,
-                                    meta: ns + ":Sub"
+                                    meta: ns + ":Concept"
                                 };
                             }));
                         }
                     };
-                    completers.push(subjectCompleter);
+                    share.getSharedVariables().completers.push(subjectCompleter);
                 }
 
                 //Put the predicate completers
@@ -283,7 +307,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             }));
                         }
                     };
-                    completers.push(predicateCompleter);
+                    share.getSharedVariables().completers.push(predicateCompleter);
                 }
 
                 //Put the object completers
@@ -301,17 +325,19 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             }));
                         }
                     };
-                    completers.push(objectCompleter);
+                    share.getSharedVariables().completers.push(objectCompleter);
                 }
+                share.getSharedVariables().setLoading(false);
             },
             function errorCallback(response) {
-                processRdfXmlCallback(ns, uri, format, 'fail');
+                share.getSharedVariables().setLoading(false);
+                share.getSharedVariables().processRdfXmlCallback(ns, uri, format, 'fail');
             });
     }
 })
 
-.service('prefixService', function($http) {
-    this.prefixCompleter = function(completers) {
+.service('prefixService', function($http, share) {
+    this.prefixCompleter = function() {
 
         $http({
             method: 'GET',
@@ -328,9 +354,10 @@ angular.module('rdfeditor.view1', ['ngRoute'])
             //Put the prefix completers
             if (arr.length > 0) {
                 var objectCompleter = {
-                    identifierRegexps: [myregexp],
+                    identifierRegexps: [/@prefix/],
                     getCompletions: function(editor, session, pos, prefix, callback) {
                         var wordList = arr;
+                        if (prefix.length === 0) { callback(null, []); return; }
                         callback(null, wordList.map(function(word) {
                             return {
                                 caption: word,
@@ -340,7 +367,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                         }));
                     }
                 };
-                completers.push(objectCompleter);
+                share.getSharedVariables().completers.push(objectCompleter);
             }
 
         }, function errorCallback(err) {
@@ -349,21 +376,25 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     }
 })
 
-.controller('View1Ctrl', function($scope, $http, RdfService, RdfSeasService, prefixService, $route, dictionary) {
+.controller('View1Ctrl', function($scope, $http, RdfService, RdfSeasService, prefixService, $route, dictionary, share) {
 
     //dictionary
-
-
     $scope.$route = $route;
     $scope.isFullScreen = false;
     // The modes
     $scope.modes = ['Turtle'];
     $scope.mode = $scope.modes[0];
     $scope.store = $rdf.graph();
+    $scope.loading = false;
     $scope.completers = [];
+    share.setVariable("completers", $scope.completers);
     $scope.uriprocessed = [];
-    $scope.urimessages = [];
-    $scope.statementmessages = [];
+    $scope.urimessages = ['fuckup up', 'another fuckup ajkshd kjahs dkajshdk jasdkhasdkh kahskdjha ksjdhkajhsd s'];
+    $scope.statementmessages = ['asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdasdad asd asd S DA ASDFS DF SADF SDF SDF ASDf'];
+
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
 
     $scope.homeactive = true;
 
@@ -372,7 +403,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         console.log('Full screen clicked');
     }
 
-    prefixService.prefixCompleter($scope.completers);
+    prefixService.prefixCompleter();
 
     // Yeah remove
     angular.element(window).on('annotate', function() {
@@ -498,23 +529,27 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                         curIndex = curIndex + 1;
                     });
 
+                    var urichanged = false;
                     newurilist.forEach(function(uri) {
                         if ($scope.uriprocessed.indexOf(uri.iri) === -1) {
                             $scope.uriprocessed.push(uri.iri);
                             if (uri.iri === 'http://ci.emse.fr/seas/' || uri.iri === 'https://w3id.org/seas/' || uri.iri === 'http://ci.emse.fr/seas' || uri.iri === 'https://w3id.org/seas') {
                                 console.log('seas detected');
                                 //processSeas(uri.ns, uri.iri, $scope.completers, processRdfXmlCallback);
-                                RdfSeasService.fillcompleters(uri.ns, uri.iri, $scope.completers, processRdfXmlCallback);
+                                RdfSeasService.fillcompleters(uri.ns, uri.iri);
                             } else {
-                                RdfService.fillcompleters(uri.ns, uri.iri, 'application/rdf+xml', $scope.completers, processRdfXmlCallback);
+                                RdfService.fillcompleters(uri.ns, uri.iri, 'application/rdf+xml');
                             }
+                            urichanged = true;
                         }
                     });
                     //repace all uriprocessed entries with newrilist.iri
-                    $scope.uriprocessed = [];
-                    newurilist.forEach(function(uri) {
-                        $scope.uriprocessed.push(uri.iri);
-                    });
+                    if (urichanged) {
+                        $scope.uriprocessed = [];
+                        newurilist.forEach(function(uri) {
+                            $scope.uriprocessed.push(uri.iri);
+                        });
+                    }
 
                     //Warning for any statements not present in URI
                     $scope.status = '';
@@ -524,8 +559,10 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             $scope.statementmessages.push('Not defined subject:' + st.subject.value);
                         if (!dictionary.contains('pred', st.predicate.value))
                             $scope.statementmessages.push('Not defined predicate:' + st.predicate.value);
-                        if (!dictionary.contains('obj', st.object.value))
+                        if (!dictionary.contains('sub', st.object.value))
                             $scope.statementmessages.push('Not defined object:' + st.object.value);
+                        //if (!dictionary.contains('obj', st.object.value))
+                        //  $scope.statementmessages.push('Not defined object:' + st.object.value);
                     });
 
                     //console.log(newurilist);
@@ -539,14 +576,25 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
     var processRdfXmlCallback = function(ns, uri, mime, result) {
         if (result !== 'fail') {
-            RdfService.fillcompleters(ns, uri, 'text/turtle', $scope.completers, processRdfXmlCallback);
+            RdfService.fillcompleters(ns, uri, 'text/turtle');
         } else {
-            //Print ERROR fatching URL message on UI
-            console.log('ULTIMATE FAILURE for uri: ' + uri);
-            if ($scope.urimessages.indexOf(uri) === -1)
+            if ($scope.urimessages.indexOf(uri) === -1) {
                 $scope.urimessages.push('could not retrieve uri: ' + uri);
+            }
+            var index = $scope.uriprocessed.indexOf(uri);
+            if (index > -1) {
+                $scope.uriprocessed.splice(index, 1);
+            }
         }
     }
+
+    share.setVariable("processRdfXmlCallback", processRdfXmlCallback);
+
+    var setLoading = function(val) {
+        $scope.loading = val;
+    }
+
+    share.setVariable("setLoading", setLoading);
 
     $scope.aceModel = "";
     /*"#Directives\n" +
@@ -570,6 +618,4 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     "_:blankSub ns:djs ns:newspace .";
     */
 
-})
-
-;
+});
