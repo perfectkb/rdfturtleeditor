@@ -4215,13 +4215,6 @@ define("ace/mode/turtle_worker",["require","exports","module","ace/lib/oop","ace
                         type: "error",
                         raw: " errorHere"
                     });
-                    errors.push({
-                        row: 0,
-                        column: 0,
-                        text: err.split('\n')[1].split('>:')[1],
-                        type: "warning",
-                        raw: " errorHere"
-                    });
                     console.log(err);
                 }
             };

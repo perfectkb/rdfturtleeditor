@@ -9,9 +9,6 @@ define("ace/mode/turtle_highlight_rules",["require","exports","module","ace/lib/
     var prefixedname = "([a-zA-Z0-9-?]+[-]*[':'])+[a-zA-Z0-9-_?]*";
     var literal = "(['\"']+[a-zA-Z0-9-_.#]+['\"']['\^\^xsd:']*['STRING|INTEGER|FLOAT']*)";
 
-
-
-
     var TurtleHighlightRules = function() {
 
         var keywordMapper = this.createKeywordMapper({
@@ -92,7 +89,7 @@ define("ace/mode/turtle_highlight_rules",["require","exports","module","ace/lib/
             }],
             "predicate": [{
                 token: "support.function",
-                regex: iri + "|" + prefixedname,
+                regex: iri + "|" + prefixedname + "|a",
                 next: "object"
             }],
             "object": [{
