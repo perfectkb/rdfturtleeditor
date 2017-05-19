@@ -389,8 +389,8 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     $scope.completers = [];
     share.setVariable("completers", $scope.completers);
     $scope.uriprocessed = [];
-    $scope.urimessages = ['fuckup up', 'another fuckup ajkshd kjahs dkajshdk jasdkhasdkh kahskdjha ksjdhkajhsd s'];
-    $scope.statementmessages = ['asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdad', 'asdasdasdasdad asd asd S DA ASDFS DF SADF SDF SDF ASDf'];
+    $scope.urimessages = [];
+    $scope.statementmessages = [];
 
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
