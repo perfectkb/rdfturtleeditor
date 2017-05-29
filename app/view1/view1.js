@@ -103,14 +103,14 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             newstore.statements.forEach(function(eachst) {
                                 try {
                                     if ((eachst.object.value.indexOf("http://www.w3.org/2000/01/rdf-schema#Class") !== -1) ||
-                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1) ||
-                                        (eachst.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1)) {
                                         if (eachst.subject.value.startsWith('https://w3id.org/seas') && !eachst.subject.value.includes('#_')) {
                                             if (seaswordlistSub.indexOf(eachst.subject.value.replace('https://w3id.org/seas/', "")) === -1) {
                                                 seaswordlistSub.push('seas:' + eachst.subject.value.replace('https://w3id.org/seas/', ""));
                                                 dictionary.put('sub', eachst.subject.value);
                                             }
                                         }
+                                        /*
                                         if (eachst.predicate.value.startsWith('https://w3id.org/seas') && !eachst.predicate.value.includes('#_')) {
                                             if (seaswordlistPred.indexOf(eachst.predicate.value.replace('https://w3id.org/seas/', "")) === -1) {
                                                 seaswordlistPred.push('seas:' + eachst.predicate.value.replace('https://w3id.org/seas/', ""));
@@ -121,6 +121,17 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                             if (seaswordlistObj.indexOf(eachst.object.value.replace('https://w3id.org/seas/', "")) === -1) {
                                                 seaswordlistObj.push('seas:' + eachst.object.value.replace('https://w3id.org/seas/', ""));
                                                 dictionary.put('obj', eachst.predicate.value);
+                                            }
+                                        }
+                                        */
+                                    } else if ((eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#AnnotationProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#DatatypeProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#ObjectProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+                                        if (eachst.subject.value.startsWith('https://w3id.org/seas') && !eachst.subject.value.includes('#_')) {
+                                            if (seaswordlistPred.indexOf(eachst.subject.value.replace('https://w3id.org/seas/', "")) === -1) {
+                                                seaswordlistPred.push('seas:' + eachst.subject.value.replace('https://w3id.org/seas/', ""));
+                                                dictionary.put('pred', eachst.subject.value);
                                             }
                                         }
                                     }
@@ -232,8 +243,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
                 store.statements.forEach(function(st) {
                     if ((st.object.value.indexOf("http://www.w3.org/2000/01/rdf-schema#Class") !== -1) ||
-                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1) ||
-                        (st.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1)) {
                         if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
                             dictionary.put('sub', st.subject.value);
                             if (uri.indexOf('#') > -1) {
@@ -246,6 +256,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                     wordlistSub.push(ns + ":" + st.subject.value.replace(uri, ""));
                             }
                         }
+                        /*
                         if (st.predicate.value.startsWith(uri)) {
                             dictionary.put('pred', st.predicate.value);
                             if (uri.indexOf('#') > -1) {
@@ -266,6 +277,23 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             } else {
                                 if (wordlistObj.indexOf(ns + ":" + st.object.value.replace(uri, "")) === -1)
                                     wordlistObj.push(ns + ":" + st.object.value.replace(uri, ""));
+                            }
+                        }
+                        */
+                    } else if (
+                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#AnnotationProperty") !== -1) ||
+                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#DatatypeProperty") !== -1) ||
+                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#ObjectProperty") !== -1) ||
+                        (st.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+                        if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
+                            dictionary.put('pred', st.subject.value);
+                            if (uri.indexOf('#') > -1) {
+                                if (st.subject.value.split('#')[1] !== '')
+                                    if (wordlistPred.indexOf(ns + ":" + st.subject.value.split('#')[1]) === -1)
+                                        wordlistPred.push(ns + ":" + st.subject.value.split('#')[1]);
+                            } else {
+                                if (wordlistPred.indexOf(ns + ":" + st.subject.value.replace(uri, "")) === -1)
+                                    wordlistPred.push(ns + ":" + st.subject.value.replace(uri, ""));
                             }
                         }
                     }
