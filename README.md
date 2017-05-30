@@ -15,6 +15,10 @@ Editor is a work in progress however the code can be downloaded and started to t
     $ cd <reponame>
     $ npm start
 
+# Starting as PM2 Process
+
+    $ cd <reponame>
+    $ pm2 start "npm" --name "rdfeditor" -- start 
 
 # License
 

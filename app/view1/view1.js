@@ -242,60 +242,65 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                 var wordlistObj = [];
 
                 store.statements.forEach(function(st) {
-                    if ((st.object.value.indexOf("http://www.w3.org/2000/01/rdf-schema#Class") !== -1) ||
-                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1)) {
-                        if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
-                            dictionary.put('sub', st.subject.value);
-                            if (uri.indexOf('#') > -1) {
-                                if (st.subject.value.split('#')[1] !== '')
-                                    if (wordlistSub.indexOf(ns + ":" + st.subject.value.split('#')[1]) === -1) {
-                                        wordlistSub.push(ns + ":" + st.subject.value.split('#')[1]);
-                                    }
-                            } else {
-                                if (wordlistSub.indexOf(ns + ":" + st.subject.value.replace(uri, "")) === -1)
-                                    wordlistSub.push(ns + ":" + st.subject.value.replace(uri, ""));
+                    try {
+                        if ((st.object.value.indexOf("http://www.w3.org/2000/01/rdf-schema#Class") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#Class") !== -1)) {
+                            if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
+                                dictionary.put('sub', st.subject.value);
+                                if (uri.indexOf('#') > -1) {
+                                    if (st.subject.value.split('#')[1] !== '')
+                                        if (wordlistSub.indexOf(ns + ":" + st.subject.value.split('#')[1]) === -1) {
+                                            wordlistSub.push(ns + ":" + st.subject.value.split('#')[1]);
+                                        }
+                                } else {
+                                    if (wordlistSub.indexOf(ns + ":" + st.subject.value.replace(uri, "")) === -1)
+                                        wordlistSub.push(ns + ":" + st.subject.value.replace(uri, ""));
+                                }
+                            }
+                            /*
+                            if (st.predicate.value.startsWith(uri)) {
+                                dictionary.put('pred', st.predicate.value);
+                                if (uri.indexOf('#') > -1) {
+                                    if (st.predicate.value.split('#')[1] !== '')
+                                        if (wordlistPred.indexOf(ns + ":" + st.predicate.value.split('#')[1]) === -1)
+                                            wordlistPred.push(ns + ":" + st.predicate.value.split('#')[1]);
+                                } else {
+                                    if (wordlistPred.indexOf(ns + ":" + st.predicate.value.replace(uri, "")) === -1)
+                                        wordlistPred.push(ns + ":" + st.predicate.value.replace(uri, ""));
+                                }
+                            }
+                            if (st.object.value.startsWith(uri)) {
+                                dictionary.put('obj', st.object.value);
+                                if (uri.indexOf('#') > -1) {
+                                    if (st.object.value.split('#')[1] !== '')
+                                        if (wordlistObj.indexOf(ns + ":" + st.object.value.split('#')[1]) === -1)
+                                            wordlistObj.push(ns + ":" + st.object.value.split('#')[1]);
+                                } else {
+                                    if (wordlistObj.indexOf(ns + ":" + st.object.value.replace(uri, "")) === -1)
+                                        wordlistObj.push(ns + ":" + st.object.value.replace(uri, ""));
+                                }
+                            }
+                            */
+                        } else if (
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#AnnotationProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#DatatypeProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#ObjectProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+                            if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
+                                dictionary.put('pred', st.subject.value);
+                                if (uri.indexOf('#') > -1) {
+                                    if (st.subject.value.split('#')[1] !== '')
+                                        if (wordlistPred.indexOf(ns + ":" + st.subject.value.split('#')[1]) === -1)
+                                            wordlistPred.push(ns + ":" + st.subject.value.split('#')[1]);
+                                } else {
+                                    if (wordlistPred.indexOf(ns + ":" + st.subject.value.replace(uri, "")) === -1)
+                                        wordlistPred.push(ns + ":" + st.subject.value.replace(uri, ""));
+                                }
                             }
                         }
-                        /*
-                        if (st.predicate.value.startsWith(uri)) {
-                            dictionary.put('pred', st.predicate.value);
-                            if (uri.indexOf('#') > -1) {
-                                if (st.predicate.value.split('#')[1] !== '')
-                                    if (wordlistPred.indexOf(ns + ":" + st.predicate.value.split('#')[1]) === -1)
-                                        wordlistPred.push(ns + ":" + st.predicate.value.split('#')[1]);
-                            } else {
-                                if (wordlistPred.indexOf(ns + ":" + st.predicate.value.replace(uri, "")) === -1)
-                                    wordlistPred.push(ns + ":" + st.predicate.value.replace(uri, ""));
-                            }
-                        }
-                        if (st.object.value.startsWith(uri)) {
-                            dictionary.put('obj', st.object.value);
-                            if (uri.indexOf('#') > -1) {
-                                if (st.object.value.split('#')[1] !== '')
-                                    if (wordlistObj.indexOf(ns + ":" + st.object.value.split('#')[1]) === -1)
-                                        wordlistObj.push(ns + ":" + st.object.value.split('#')[1]);
-                            } else {
-                                if (wordlistObj.indexOf(ns + ":" + st.object.value.replace(uri, "")) === -1)
-                                    wordlistObj.push(ns + ":" + st.object.value.replace(uri, ""));
-                            }
-                        }
-                        */
-                    } else if (
-                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#AnnotationProperty") !== -1) ||
-                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#DatatypeProperty") !== -1) ||
-                        (st.object.value.indexOf("http://www.w3.org/2002/07/owl#ObjectProperty") !== -1) ||
-                        (st.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
-                        if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
-                            dictionary.put('pred', st.subject.value);
-                            if (uri.indexOf('#') > -1) {
-                                if (st.subject.value.split('#')[1] !== '')
-                                    if (wordlistPred.indexOf(ns + ":" + st.subject.value.split('#')[1]) === -1)
-                                        wordlistPred.push(ns + ":" + st.subject.value.split('#')[1]);
-                            } else {
-                                if (wordlistPred.indexOf(ns + ":" + st.subject.value.replace(uri, "")) === -1)
-                                    wordlistPred.push(ns + ":" + st.subject.value.replace(uri, ""));
-                            }
-                        }
+                    } catch (err) {
+                        //Current bug. TypeError is thrown when object is a collection type in statement
+                        console.log('Fucking typeerror')
                     }
                 });
 
