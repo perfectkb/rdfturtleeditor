@@ -61,7 +61,8 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
 .service('RdfSeasService', function($http, dictionary, share) {
     //var proxy = 'http://localhost:8080/';
-    var proxy = 'http://54.91.114.123:8080/'
+    //var proxy = 'http://54.91.114.123:8080/'
+    var proxy = 'http://bpproxy.engielab.eu/';
 
     this.fillcompleters = function(ns, iri, callbackFunc) {
         console.log('Going to fetch: ' + iri);
@@ -110,24 +111,20 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                                 dictionary.put('sub', eachst.subject.value);
                                             }
                                         }
-                                        /*
-                                        if (eachst.predicate.value.startsWith('https://w3id.org/seas') && !eachst.predicate.value.includes('#_')) {
-                                            if (seaswordlistPred.indexOf(eachst.predicate.value.replace('https://w3id.org/seas/', "")) === -1) {
-                                                seaswordlistPred.push('seas:' + eachst.predicate.value.replace('https://w3id.org/seas/', ""));
-                                                dictionary.put('pred', eachst.predicate.value);
-                                            }
-                                        }
-                                        if (eachst.object.value.startsWith('https://w3id.org/seas') && !eachst.object.value.includes('#_')) {
-                                            if (seaswordlistObj.indexOf(eachst.object.value.replace('https://w3id.org/seas/', "")) === -1) {
-                                                seaswordlistObj.push('seas:' + eachst.object.value.replace('https://w3id.org/seas/', ""));
-                                                dictionary.put('obj', eachst.predicate.value);
-                                            }
-                                        }
-                                        */
                                     } else if ((eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#AnnotationProperty") !== -1) ||
                                         (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#DatatypeProperty") !== -1) ||
                                         (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#ObjectProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#TransitiveProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#SymmetricProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#ReflexiveProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#IrreflexiveProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#InverseFunctionalProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#FunctionalProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#DeprecatedProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#AsymmetricProperty") !== -1) ||
+                                        (eachst.object.value.indexOf("http://www.w3.org/2002/07/owl#OntologyProperty") !== -1) ||
                                         (eachst.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
+
                                         if (eachst.subject.value.startsWith('https://w3id.org/seas') && !eachst.subject.value.includes('#_')) {
                                             if (seaswordlistPred.indexOf(eachst.subject.value.replace('https://w3id.org/seas/', "")) === -1) {
                                                 seaswordlistPred.push('seas:' + eachst.subject.value.replace('https://w3id.org/seas/', ""));
@@ -213,7 +210,8 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 .service('RdfService', function($http, dictionary, share) {
     this.fillcompleters = function(ns, uri, format) {
         //var proxy = 'http://localhost:8080/';
-        var proxy = 'http://54.91.114.123:8080/';
+        //var proxy = 'http://54.91.114.123:8080/';
+        var proxy = 'http://bpproxy.engielab.eu/';
 
         var store = $rdf.graph();
         var parsed = false;
@@ -257,34 +255,19 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                         wordlistSub.push(ns + ":" + st.subject.value.replace(uri, ""));
                                 }
                             }
-                            /*
-                            if (st.predicate.value.startsWith(uri)) {
-                                dictionary.put('pred', st.predicate.value);
-                                if (uri.indexOf('#') > -1) {
-                                    if (st.predicate.value.split('#')[1] !== '')
-                                        if (wordlistPred.indexOf(ns + ":" + st.predicate.value.split('#')[1]) === -1)
-                                            wordlistPred.push(ns + ":" + st.predicate.value.split('#')[1]);
-                                } else {
-                                    if (wordlistPred.indexOf(ns + ":" + st.predicate.value.replace(uri, "")) === -1)
-                                        wordlistPred.push(ns + ":" + st.predicate.value.replace(uri, ""));
-                                }
-                            }
-                            if (st.object.value.startsWith(uri)) {
-                                dictionary.put('obj', st.object.value);
-                                if (uri.indexOf('#') > -1) {
-                                    if (st.object.value.split('#')[1] !== '')
-                                        if (wordlistObj.indexOf(ns + ":" + st.object.value.split('#')[1]) === -1)
-                                            wordlistObj.push(ns + ":" + st.object.value.split('#')[1]);
-                                } else {
-                                    if (wordlistObj.indexOf(ns + ":" + st.object.value.replace(uri, "")) === -1)
-                                        wordlistObj.push(ns + ":" + st.object.value.replace(uri, ""));
-                                }
-                            }
-                            */
                         } else if (
                             (st.object.value.indexOf("http://www.w3.org/2002/07/owl#AnnotationProperty") !== -1) ||
                             (st.object.value.indexOf("http://www.w3.org/2002/07/owl#DatatypeProperty") !== -1) ||
                             (st.object.value.indexOf("http://www.w3.org/2002/07/owl#ObjectProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#TransitiveProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#SymmetricProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#ReflexiveProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#IrreflexiveProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#InverseFunctionalProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#FunctionalProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#DeprecatedProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#AsymmetricProperty") !== -1) ||
+                            (st.object.value.indexOf("http://www.w3.org/2002/07/owl#OntologyProperty") !== -1) ||
                             (st.object.value.indexOf("http://www.w3.org/1999/02/22-rdf-syntax-ns#Property") !== -1)) {
                             if (!(uri === st.subject.value || uri === st.subject.value + '/') && st.subject.value.startsWith(uri)) {
                                 dictionary.put('pred', st.subject.value);
@@ -592,7 +575,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             $scope.statementmessages.push('Not defined subject:' + st.subject.value);
                         if (!dictionary.contains('pred', st.predicate.value))
                             $scope.statementmessages.push('Not defined predicate:' + st.predicate.value);
-                        if (!dictionary.contains('sub', st.object.value))
+                        if (!dictionary.contains('sub', st.subject.value))
                             $scope.statementmessages.push('Not defined object:' + st.object.value);
                         //if (!dictionary.contains('obj', st.object.value))
                         //  $scope.statementmessages.push('Not defined object:' + st.object.value);
