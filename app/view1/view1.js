@@ -60,9 +60,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 })
 
 .service('RdfSeasService', function($http, dictionary, share) {
-    //var proxy = 'http://localhost:8080/';
-    //var proxy = 'http://54.91.114.123:8080/'
-    var proxy = 'http://bpproxy.engielab.eu/';
+    var proxy = 'http://54.91.114.123:8080/';
 
     this.fillcompleters = function(ns, iri, callbackFunc) {
         console.log('Going to fetch: ' + iri);
@@ -204,14 +202,11 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
             });
     };
-
 })
 
 .service('RdfService', function($http, dictionary, share) {
     this.fillcompleters = function(ns, uri, format) {
-        //var proxy = 'http://localhost:8080/';
-        //var proxy = 'http://54.91.114.123:8080/';
-        var proxy = 'http://bpproxy.engielab.eu/';
+        var proxy = 'http://54.91.114.123:8080/';
 
         var store = $rdf.graph();
         var parsed = false;
@@ -406,11 +401,12 @@ angular.module('rdfeditor.view1', ['ngRoute'])
             }
         }
         return this;
-    }
+    };
 
     //dictionary
     $scope.$route = $route;
     $scope.isFullScreen = false;
+
     // The modes
     $scope.modes = ['Turtle'];
     $scope.mode = $scope.modes[0];
@@ -523,9 +519,15 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                 console.log('session changed');
             });
             _session.on("change", function() {
-                //console.log(' content changed ')
-                //console.log(_session.doc);
+
                 var text = '';
+                //parse for text words
+                _session.doc.$lines.forEach(function(line) {
+                    if (!line.startsWith('#')) {
+                        text += line + ' ';
+                        //process prefixes
+                    }
+                });
 
                 //feature: insert prefix when known namespace is added
                 var currline = _ace.getSelectionRange().start.row;
@@ -537,7 +539,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     wholelinetxt.split(' ')[wholelinetxt.split(' ').length - 1].slice(-1) == ':') {
 
                     var namespace = wholelinetxt.split(' ')[wholelinetxt.split(' ').length - 1];
-                    console.log('whole line text: ' + wholelinetxt + '   et namespace is:' + namespace);
+                    //console.log('whole line text: ' + wholelinetxt + '   et namespace is:' + namespace);
                     var prefixArr = share.getSharedVariables("prefix");
                     //console.log(prefixArr.prefix);
                     prefixArr.prefix.forEach(function(pref) {
@@ -547,7 +549,20 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             var index = $scope.uridetected.indexOf(pref.split('<')[1].split('>')[0]);
                             if (index === -1) {
                                 //its not processed, add this prefix
-                                _ace.session.insert({ row: 1, column: 0 }, '@prefix ' + pref + '\n');
+                                console.log(_session.doc.$lines);
+                                //_ace.session.insert({ row: 1, column: 0 }, "@prefix " + pref + '\r\n');
+                                _session.doc.insertLines(1, ["@prefix " + pref]);
+                                var row = _ace.getSelectionRange().start.row;
+                                _ace.gotoLine(row + 1, _ace.session.getLine(row).length);
+                                console.log(wholelinetxt);
+                                //_session.doc.removeLines(row, row);
+                                //_session.remove(new Range(row, 0, row, Number.MAX_VALUE), wholelinetxt);
+
+                                //_ace.session.insertNewLine({ row: currline, column: 0 });
+                                //replace current line text | NOT WORKING!!
+                                //var row = _ace.getSelectionRange().start.row;
+                                //_ace.session.replace(new Range(row, 0, row, Number.MAX_VALUE), wholelinetxt);
+                                //console.log(_session.doc.$lines);
                                 $scope.uridetected.push(pref.split('<')[1].split('>')[0]);
                             }
                         }
@@ -567,44 +582,22 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
                 //Parse it to see if its a valid document or not yet.
                 try {
-                    var uri = 'https://example.org/resource.ttl';
-                    var mimeType = 'text/turtle';
-                    var store = $rdf.graph();
 
-                    $scope.statementmessages = [];
-                    $scope.urimessages = [];
-                    $rdf.parse(text, store, uri, mimeType);
-                    $scope.messages = [];
-
-                    var prefixtemparray = [];
-                    var iriRegex = new RegExp(/['@']+prefix+\s+[a-zA-Z0-9]+[':']+\s*<[a-zA-Z]*['s://'?'://']*?[a-zA-Z0-9-_./#?=]+>+/);
-
-                    _session.doc.$lines.forEach(function(line) {
-                        if (!line.startsWith('#')) {
-                            text += line + ' ';
-                            //process prefixes
-                        }
-                    });
-                    //reset
-                    if (text == '') {
-                        console.log("empty");
-                    }
-
-                    var bagOfWords = text.split(" ");
-
-                    //$scope.uriprocessed =
+                    //Process prefixes for autocompletion
                     var newurilist = [];
-                    var curIndex = 0;
+                    _session.doc.$lines.forEach(function(line1) {
+                        var line = line1.replace(/ +/g, ' ');
+                        var lineUri = line.replace(/['@']+prefix+\s+[a-zA-Z0-9]+[':']+\s*<[a-zA-Z]*['s://'?'://']*?[a-zA-Z0-9-_./#?=]+>\s+./g, "thisisuri");
+                        console.log(lineUri);
 
-                    bagOfWords.forEach(function(curWord) {
-                        if (curWord.includes('@prefix')) {
-                            var thisuri = bagOfWords[curIndex + 2];
+                        if (lineUri.indexOf("thisisuri") !== -1) {
+                            var thisuri = line.split(' ')[2];
                             var start_pos = thisuri.indexOf('<') + 1;
                             var end_pos = thisuri.indexOf('>', start_pos);
                             var finalthisuri = thisuri.substring(start_pos, end_pos);
-                            newurilist.push({ iri: finalthisuri, ns: bagOfWords[curIndex + 1].slice(0, -1) });
+                            console.log(finalthisuri);
+                            newurilist.push({ iri: finalthisuri, ns: line.split(' ')[1] });
                         }
-                        curIndex = curIndex + 1;
                     });
 
                     var urichanged = false;
@@ -630,6 +623,21 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             $scope.uridetected.push(uri.iri);
                         });
                     }
+
+                    //Try parsing the document
+                    var uri = 'https://example.org/resource.ttl';
+                    var mimeType = 'text/turtle';
+                    var store = $rdf.graph();
+
+                    $scope.statementmessages = [];
+                    $scope.urimessages = [];
+                    $rdf.parse(text, store, uri, mimeType);
+                    $scope.messages = [];
+
+                    var prefixtemparray = [];
+                    var iriRegex = new RegExp(/['@']+prefix+\s+[a-zA-Z0-9]+[':']+\s*<[a-zA-Z]*['s://'?'://']*?[a-zA-Z0-9-_./#?=]+>+/);
+
+                    var bagOfWords = text.split(" ");
 
                     //Warning for any statements not present in URI
                     $scope.status = '';
