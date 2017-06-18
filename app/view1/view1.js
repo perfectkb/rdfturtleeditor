@@ -63,8 +63,10 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     var proxy = 'http://54.91.114.123:8080/';
 
     this.fillcompleters = function(ns, iri, callbackFunc) {
+
         console.log('Going to fetch: ' + iri);
-        share.getSharedVariables().setLoading(true);
+        share.getSharedVariables().setLoading("seas", true);
+
         $http({
             method: 'GET',
             url: proxy + iri,
@@ -134,7 +136,6 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                     //Current bug. TypeError is thrown when object is a collection type in statement
                                     console.log('typeerror')
                                 }
-
                             });
 
                             if (seaswordlistObj.length > 0) {
@@ -186,9 +187,9 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                                 };
                                 share.getSharedVariables().completers.push(objectCompleter);
                             }
-                            share.getSharedVariables().setLoading(false);
+                            share.getSharedVariables().setLoading("seas", false);
                         }, function(err) {
-                            share.getSharedVariables().setLoading(false);
+                            //share.getSharedVariables().setLoading("seas", false);
                             console.log('fucked up - could not retrieve seas ontology uri:');
                         });
                     }
@@ -210,7 +211,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
         var store = $rdf.graph();
         var parsed = false;
-        share.getSharedVariables().setLoading(true);
+        share.getSharedVariables().setLoading("others", true);
 
         $http({
             method: 'GET',
@@ -282,7 +283,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     }
                 });
 
-                var myreg = "/[" + ns + ":]+/";
+                var myreg = "/[" + ns + "]+/";
                 var myregexp = new RegExp(myreg);
 
                 //Put the subject completers
@@ -338,10 +339,10 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     };
                     share.getSharedVariables().completers.push(objectCompleter);
                 }
-                share.getSharedVariables().setLoading(false);
+                share.getSharedVariables().setLoading("others", false);
             },
             function errorCallback(response) {
-                share.getSharedVariables().setLoading(false);
+                share.getSharedVariables().setLoading("others", false);
                 share.getSharedVariables().processRdfXmlCallback(ns, uri, format, 'fail');
             });
     }
@@ -418,6 +419,11 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     $scope.uridetected = [];
     $scope.urimessages = [];
     $scope.statementmessages = [];
+    $scope.inprocess = [];
+    $scope.editor = null;
+    $scope.basiccompleterwords = ["@prefix", "@base"];
+    $scope.anglebracketcompleterwords = [];
+    $scope.coloncompleterwords = [];
 
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
@@ -459,6 +465,8 @@ angular.module('rdfeditor.view1', ['ngRoute'])
         },
         onLoad: function(_ace) {
 
+            $scope.editor = _ace;
+
             // HACK to have the ace instance in the scope...
             $scope.modeChanged = function() {
                 _ace.getSession().setMode("ace/mode/" + $scope.mode.toLowerCase());
@@ -474,7 +482,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
             _session.setOverwrite(true);
             _renderer.setShowGutter(true);
 
-            console.log(_ace);
+            //console.log(_ace);
 
             _ace.completers = $scope.completers;
 
@@ -493,7 +501,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     popup.container.style.width = "600px";
                     popup.resize();
 
-                    var wordList = ["@prefix", "@base"];
+                    var wordList = $scope.basiccompleterwords;
                     callback(null, wordList.map(function(word) {
                         return {
                             caption: word,
@@ -505,6 +513,46 @@ angular.module('rdfeditor.view1', ['ngRoute'])
             }
 
             $scope.completers.push(basiccompleter);
+
+            var angleBracketCompleter = {
+                identifierRegexps: [/[<]+/],
+                getCompletions: function(editor, session, pos, prefix, callback) {
+
+                    //Below code changes the width of completers topup
+                    //if (!editor.completer) { editor.completer = new Autocomplete(); }
+                    //editor.completer.$init();
+                    //var popup = editor.completer.popup;
+                    //popup.container.style.width = "600px";
+                    //popup.resize();
+
+                    var wordList = $scope.anglebracketcompleterwords;
+                    callback(null, wordList.map(function(word) {
+                        return {
+                            caption: word,
+                            value: word,
+                            meta: "local"
+                        };
+                    }));
+                }
+            }
+
+            $scope.completers.push(angleBracketCompleter);
+
+            var colonCompleter = {
+                identifierRegexps: [/[:]/],
+                getCompletions: function(editor, session, pos, prefix, callback) {
+                    var wordList = $scope.coloncompleterwords;
+                    callback(null, wordList.map(function(word) {
+                        return {
+                            caption: word,
+                            value: word,
+                            meta: "local"
+                        };
+                    }));
+                }
+            }
+
+            $scope.completers.push(colonCompleter);
 
             //below code sets annotation on gutter of editor
             _ace.getSession().setAnnotations([{
@@ -549,12 +597,13 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             var index = $scope.uridetected.indexOf(pref.split('<')[1].split('>')[0]);
                             if (index === -1) {
                                 //its not processed, add this prefix
-                                console.log(_session.doc.$lines);
+                                //console.log(_session.doc.$lines);
                                 //_ace.session.insert({ row: 1, column: 0 }, "@prefix " + pref + '\r\n');
                                 _session.doc.insertLines(1, ["@prefix " + pref]);
                                 var row = _ace.getSelectionRange().start.row;
                                 _ace.gotoLine(row + 1, _ace.session.getLine(row).length);
-                                console.log(wholelinetxt);
+                                //console.log(wholelinetxt);
+
                                 //_session.doc.removeLines(row, row);
                                 //_session.remove(new Range(row, 0, row, Number.MAX_VALUE), wholelinetxt);
 
@@ -588,15 +637,15 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     _session.doc.$lines.forEach(function(line1) {
                         var line = line1.replace(/ +/g, ' ');
                         var lineUri = line.replace(/['@']+prefix+\s+[a-zA-Z0-9]+[':']+\s*<[a-zA-Z]*['s://'?'://']*?[a-zA-Z0-9-_./#?=]+>\s+./g, "thisisuri");
-                        console.log(lineUri);
+                        //console.log(lineUri);
 
                         if (lineUri.indexOf("thisisuri") !== -1) {
                             var thisuri = line.split(' ')[2];
                             var start_pos = thisuri.indexOf('<') + 1;
                             var end_pos = thisuri.indexOf('>', start_pos);
                             var finalthisuri = thisuri.substring(start_pos, end_pos);
-                            console.log(finalthisuri);
-                            newurilist.push({ iri: finalthisuri, ns: line.split(' ')[1] });
+                            //console.log(finalthisuri);
+                            newurilist.push({ iri: finalthisuri, ns: line.split(' ')[1].split(':')[0] });
                         }
                     });
 
@@ -635,7 +684,6 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     $scope.messages = [];
 
                     var prefixtemparray = [];
-                    var iriRegex = new RegExp(/['@']+prefix+\s+[a-zA-Z0-9]+[':']+\s*<[a-zA-Z]*['s://'?'://']*?[a-zA-Z0-9-_./#?=]+>+/);
 
                     var bagOfWords = text.split(" ");
 
@@ -643,15 +691,30 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                     $scope.status = '';
 
                     store.statements.forEach(function(st) {
-                        if (!dictionary.contains('sub', st.subject.value))
-                            $scope.statementmessages.push('Not defined subject:' + st.subject.value);
-                        if (!dictionary.contains('pred', st.predicate.value))
-                            $scope.statementmessages.push('Not defined predicate:' + st.predicate.value);
-                        if (!dictionary.contains('sub', st.subject.value))
-                            $scope.statementmessages.push('Not defined object:' + st.object.value);
+                        if (!dictionary.contains('sub', st.subject.value)) {
+                            $scope.statementmessages.push('Subject term is not found: ' + st.subject.value);
+                            //console.log(st.subject.value);
+                        }
+                        if (!dictionary.contains('pred', st.predicate.value)) {
+                            $scope.statementmessages.push('Predicate term is not found: ' + st.predicate.value);
+                        }
+                        if (!dictionary.contains('sub', st.object.value)) {
+                            $scope.statementmessages.push('Object term is not found: ' + st.object.value);
+                            //console.log(st.object.value);
+                        }
+                        //Auto-completion within this document
+                        if (st.subject.value.lastIndexOf("https://example.org", 0) === 0) {
+                            //https://example.org/resource.ttl#hammad
+                            //https://example.org/hammad
+                            if (st.subject.value.indexOf('#') !== -1) {
+                                $scope.coloncompleterwords.remove(':' + st.subject.value.split('#')[1]);
+                                $scope.coloncompleterwords.push(':' + st.subject.value.split('#')[1]);
+                            } else {
+                                $scope.anglebracketcompleterwords.remove('<' + st.subject.value.replace('https://example.org/', '') + '>');
+                                $scope.anglebracketcompleterwords.push('<' + st.subject.value.replace('https://example.org/', '') + '>');
+                            }
+                        }
                     });
-
-                    //console.log(newurilist);
                 } catch (err) {
                     //means not a valid document yet
                     //console.log(err);
@@ -676,11 +739,23 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
     share.setVariable("processRdfXmlCallback", processRdfXmlCallback);
 
-    var setLoading = function(val) {
-        $scope.loading = val;
+    var setLoading = function(name, val) {
+
+        if (val == false) {
+            for (var i = 0; i < $scope.inprocess.length; i++) {
+                if ($scope.inprocess[i].name == name) {
+                    $scope.inprocess.splice(i, 1);
+                }
+            }
+        } else {
+            $scope.inprocess.push({ 'name': name, 'value': val });
+        }
+
+        if ($scope.inprocess.length < 1)
+            $scope.loading = false;
+        else
+            $scope.loading = true;
     }
-
     share.setVariable("setLoading", setLoading);
-
     $scope.aceModel = "";
 });
