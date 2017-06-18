@@ -1,15 +1,20 @@
 # About
 
-RDF Turtle Editor
+RDF Turtle Editor with following features;
 
+- RDF turtle syntax highlighting 
+- Live RDF turtle synax validation
+- Checks conformance of RDF document with Web of Data
+- Parses prefixed ontologies and adds as part of auto-completion
+- Makes newly defined terms in current document part of auto-completion
+- Displays notification for terms that are not verified or validated
+- Parses prefixed ontologies in both rdf+xml and turtle format
+- Compatible with [RDFJS task force spec](https://github.com/rdfjs/representation-task-force/blob/master/interface-spec.md)
 
-# Status
-
-Work in progress
 
 # Gettig Started
 
-Editor is a work in progress however the code can be downloaded and started to test with below procedure;
+In order to deploy your own copy of the RDF turle editor, below procedure can be applied;
 
     $ git clone <url-of-this-repo>
     $ cd <reponame>
@@ -17,8 +22,15 @@ Editor is a work in progress however the code can be downloaded and started to t
 
 # Starting as PM2 Process
 
+This is possible to start the editor as a pm2 process;
+
+    $ git clone <url-of-this-repo>
     $ cd <reponame>
     $ pm2 start "npm" --name "rdfeditor" -- start 
 
-# License
+# Acknowledgements
 
+Special thanks goes to;
+- Data team for [rdflib.js](https://github.com/linkeddata/rdflib.js)
+- Contributors behind [ace editor](https://github.com/ajaxorg/ace) that rdfturtleditor uses to incorporate turtle format specifications
+- [Prefix.cc](http://prefix.cc/) that is used to fetch popular prefixes for prefix auto-completion
