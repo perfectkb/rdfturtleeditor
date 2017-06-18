@@ -1,6 +1,6 @@
-# About
+# RDF Turtle Editor
 
-RDF Turtle Editor with following features;
+This repository contains source code of RDF Turtle Editor with following features;
 
 - RDF turtle syntax highlighting 
 - Live RDF turtle synax validation
