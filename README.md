@@ -3,12 +3,12 @@
 This repository contains source code of RDF Turtle Editor with following features;
 
 - RDF turtle syntax highlighting 
-- Live RDF turtle synax validation
+- Live RDF turtle syntax validation
 - Checks conformance of RDF document with Web of Data
 - Parses prefixed ontologies and adds as part of auto-completion
 - Makes newly defined terms in current document part of auto-completion
-- Displays notification for terms that are not verified or validated
 - Parses prefixed ontologies in both rdf+xml and turtle format
+- ...and many more
 - Compatible with [RDFJS task force spec](https://github.com/rdfjs/representation-task-force/blob/master/interface-spec.md)
 
 
