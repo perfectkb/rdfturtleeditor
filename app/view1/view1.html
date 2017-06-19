@@ -2,7 +2,9 @@
     <div class="col-md-9">
         <div ng-class="{aceeditormax: isFullScreen}" ui-ace="aceOption" ng-model="aceModel"></div>
         <i ng-show="loading" class="fa fa-spinner fa-spin" style="font-size:24px"></i>
-        <i ng-show="!loading" class="fa fa-television" style="font-size:24px"></i>
+        <i ng-show="!loading && currentError=='' && !(urimessages.length !==0 || statementmessages.length !==0)" class="fa fa-thumbs-o-up" style="font-size:24px;color:green; ">&nbsp;&nbsp;<span ng-show="!loading" style="font-size:12px;color:green; font-weight:bold; font-family:Verdana, Geneva, Tahoma, sans-serif">All Looks Good!</span></i>
+        <i ng-show="!loading && currentError=='' && (urimessages.length !==0 || statementmessages.length !==0)" class="fa fa-thumbs-o-up" style="font-size:24px;color:maroon; ">&nbsp;&nbsp;<span ng-show="!loading" style="font-size:12px;color:maroon;font-family:Verdana, Geneva, Tahoma, sans-serif">Syntax validated but you may want to have a look at notifications!</span></i>
+        <i ng-show="!currentError==''" class="fa fa-thumbs-down" style="font-size:24px">&nbsp;&nbsp;<span ng-show="!loading" style="font-size:12px;color:red; font-family:Verdana, Geneva, Tahoma, sans-serif">{{currentError.split("of <")[0]}} has syntax error:{{currentError.split(">:")[1]}}</span></i>
     </div>
     <div class="col-md-3 warning">
         <div style="border:0ch;" class="panel panel-primary">

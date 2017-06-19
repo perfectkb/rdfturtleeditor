@@ -388,8 +388,12 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     }
 })
 
-.controller('View1Ctrl', function($scope, $http, RdfService, RdfSeasService, prefixService, $route, dictionary, share) {
+.controller('View1Ctrl', function($rootScope, $scope, $http, RdfService, RdfSeasService, prefixService, $route, dictionary, share) {
 
+    $rootScope.$on("annotate", function(event, data) {
+        //deletes the item from list from view
+        console.log('the fuck just hapened');
+    });
     //Javascript utility function
     Array.prototype.remove = function() {
         var what, a = arguments,
@@ -424,6 +428,7 @@ angular.module('rdfeditor.view1', ['ngRoute'])
     $scope.basiccompleterwords = ["@prefix", "@base"];
     $scope.anglebracketcompleterwords = [];
     $scope.coloncompleterwords = [];
+    $scope.currentError = '';
 
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
@@ -680,7 +685,8 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
                     $scope.statementmessages = [];
                     $scope.urimessages = [];
-                    $rdf.parse(text, store, uri, mimeType);
+                    text.replace(/^#!.*\n/, "\n").match(/[^\r\n]+/g);
+                    $rdf.parse(_session.doc.getValue(), store, uri, mimeType);
                     $scope.messages = [];
 
                     var prefixtemparray = [];
@@ -692,13 +698,16 @@ angular.module('rdfeditor.view1', ['ngRoute'])
 
                     store.statements.forEach(function(st) {
                         if (!dictionary.contains('sub', st.subject.value)) {
+                            $scope.statementmessages.remove('Subject term is not found: ' + st.subject.value);
                             $scope.statementmessages.push('Subject term is not found: ' + st.subject.value);
                             //console.log(st.subject.value);
                         }
                         if (!dictionary.contains('pred', st.predicate.value)) {
+                            $scope.statementmessages.remove('Predicate term is not found: ' + st.predicate.value);
                             $scope.statementmessages.push('Predicate term is not found: ' + st.predicate.value);
                         }
                         if (!dictionary.contains('sub', st.object.value)) {
+                            $scope.statementmessages.remove('Object term is not found: ' + st.object.value);
                             $scope.statementmessages.push('Object term is not found: ' + st.object.value);
                             //console.log(st.object.value);
                         }
@@ -715,8 +724,9 @@ angular.module('rdfeditor.view1', ['ngRoute'])
                             }
                         }
                     });
+                    $scope.currentError = '';
                 } catch (err) {
-                    //means not a valid document yet
+                    $scope.currentError = err.toString().split('\n')[1];
                     //console.log(err);
                 }
             });
