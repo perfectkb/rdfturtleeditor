@@ -20,7 +20,7 @@ In order to deploy your own copy of the RDF turle editor, below procedure can be
     $ cd <reponame>
     $ npm start
 
-# Starting as PM2 Process
+## Starting as PM2 Process
 
 This is possible to start the editor as a pm2 process;
 
@@ -31,6 +31,6 @@ This is possible to start the editor as a pm2 process;
 # Acknowledgements
 
 Special thanks goes to;
-- Data team for [rdflib.js](https://github.com/linkeddata/rdflib.js)
+- Linkeddata team for [rdflib.js](https://github.com/linkeddata/rdflib.js)
 - Contributors behind [ace editor](https://github.com/ajaxorg/ace) that rdfturtleditor uses to incorporate turtle format specifications
 - [Prefix.cc](http://prefix.cc/) that is used to fetch popular prefixes for prefix auto-completion
